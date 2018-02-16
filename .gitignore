@@ -2,3 +2,18 @@
 # CLion
 .idea/
 cmake-build-debug/
+
+sqlite/.deps/
+sqlite/.libs/
+sqlite/Makefile
+sqlite/config.log
+sqlite/config.status
+sqlite/libsqlite3.la
+sqlite/libtool
+sqlite/sqlite3
+sqlite/sqlite3-shell.o
+sqlite/sqlite3-sqlite3.o
+sqlite/sqlite3.lo
+sqlite/sqlite3.o
+sqlite/sqlite3.pc
+
