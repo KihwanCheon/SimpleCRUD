@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 98)
 include_directories(../googletest/googletest/include)
 include_directories(../googletest/googletest)
 include_directories(../SimpleCRUD/src)
+include_directories(../sqlite)
 
 file(GLOB gtest_srcs
         ../googletest/googletest/src/gtest-all.cc)
