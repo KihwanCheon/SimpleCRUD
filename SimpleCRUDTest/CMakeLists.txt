@@ -12,7 +12,9 @@ file(GLOB gtest_srcs
         ../googletest/googletest/src/gtest-all.cc)
 
 file(GLOB test_case_srcs
-        ${CMAKE_CURRENT_SOURCE_DIR}/*Test.cpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*Test.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*/*Test.cpp
+        )
 
 add_executable(${PROJECT_NAME} test_main.cpp ${gtest_srcs} ${test_case_srcs})
 
