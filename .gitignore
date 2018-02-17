@@ -3,6 +3,7 @@
 .idea/
 cmake-build-debug/
 
+# ignore make build results.
 sqlite/.deps/
 sqlite/.libs/
 sqlite/Makefile
@@ -17,3 +18,24 @@ sqlite/sqlite3.lo
 sqlite/sqlite3.o
 sqlite/sqlite3.pc
 
+
+# ignore vs project file by cmake generator.
+SimpleCRUD/ALL_BUILD.vcxproj
+SimpleCRUD/ALL_BUILD.vcxproj.filters
+SimpleCRUD/CMakeFiles/
+SimpleCRUD/SimpleCRUD.sln
+SimpleCRUD/SimpleCRUD.vcxproj
+SimpleCRUD/SimpleCRUD.vcxproj.filters
+SimpleCRUD/cmake_install.cmake
+SimpleCRUD/libSimpleCRUD.vcxproj
+SimpleCRUD/libSimpleCRUD.vcxproj.filters
+SimpleCRUD/libsqlite3.vcxproj
+SimpleCRUD/libsqlite3.vcxproj.filters
+SimpleCRUDTest/ALL_BUILD.vcxproj
+SimpleCRUDTest/ALL_BUILD.vcxproj.filters
+SimpleCRUDTest/CMakeFiles/
+SimpleCRUDTest/SimpleCRUDTest.sln
+SimpleCRUDTest/SimpleCRUDTest.vcxproj
+SimpleCRUDTest/SimpleCRUDTest.vcxproj.filters
+SimpleCRUDTest/cmake_install.cmake
+build/
