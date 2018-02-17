@@ -15,12 +15,14 @@ namespace Member {
 
     class DAO {
     public:
-        DAO(sqlite3* &conn);
+        explicit DAO(sqlite3 *&conn);
+
         ~DAO();
+
     private:
-        sqlite3* conn;
+        sqlite3 *conn;
     public:
-        bool insert(Member& dto);
+        bool insert(Member &dto);
 
         bool select(const char *name, Member &dto);
 

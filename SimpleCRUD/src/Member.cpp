@@ -10,7 +10,7 @@
 using namespace Member;
 
 
-DAO::DAO(sqlite3* &conn) :conn(conn) {
+DAO::DAO(sqlite3 *&conn) :conn(conn) {
 
 }
 
