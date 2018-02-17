@@ -1,7 +1,21 @@
 cmake_minimum_required(VERSION 3.9)
 
-project(RefactorWithGit)
+project(SimpleCRUDTest)
 
 set(CMAKE_CXX_STANDARD 98)
 
-add_executable(SimpleCRUDTest test_main.cpp)
+include_directories(../googletest/googletest/include)
+include_directories(../googletest/googletest)
+include_directories(../SimpleCRUD/src)
+
+file(GLOB gtest_srcs
+        ../googletest/googletest/src/gtest-all.cc)
+
+file(GLOB test_case_srcs
+        ${CMAKE_CURRENT_SOURCE_DIR}/*Test.cpp)
+
+add_executable(${PROJECT_NAME} test_main.cpp ${gtest_srcs} ${test_case_srcs})
+
+target_link_libraries(${PROJECT_NAME}
+        libSimpleCRUD
+        )
