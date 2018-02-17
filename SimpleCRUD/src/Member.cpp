@@ -9,6 +9,15 @@
 using namespace Member;
 
 
+DAO::DAO(sqlite3& *conn) :conn(conn) {
+
+}
+
+DAO::~DAO()
+{
+
+}
+
 static int callback_insert(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
     for (i = 0; i < argc; i++) {

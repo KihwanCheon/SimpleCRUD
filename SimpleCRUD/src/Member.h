@@ -15,6 +15,11 @@ namespace Member {
 
     class DAO {
     public:
+        DAO(sqlite3& *conn);
+        ~DAO();
+    private:
+        sqlite3* conn;
+    public:
         bool insert(DTO& dto);
     };
 }

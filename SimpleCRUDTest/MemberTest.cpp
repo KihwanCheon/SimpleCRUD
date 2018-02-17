@@ -8,7 +8,7 @@ namespace Member
 {
     TEST(MemberDTO, insert_test)
     {
-        DAO dao;
+        DAO dao(NULL);
         DTO dto;
         dto.name  = "gujjy";
         dto.age = 30;
