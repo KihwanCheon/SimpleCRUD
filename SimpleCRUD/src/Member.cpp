@@ -60,7 +60,7 @@ namespace Member
 	bool DAO::select(const char *name, Member &dto) {
 		sqlite3_stmt* pstmt = nullptr;
 		const char* tail = nullptr;
-		const char* sql = "select * from Member where name = ?1 ";
+		const char* sql = "select oid, * from Member where name = ?1 ";
 		int rt2 = sqlite3_prepare(conn, sql, (int)strlen(sql), &pstmt, &tail);
 		if (rt2 != SQLITE_OK)
 		{
@@ -83,9 +83,10 @@ namespace Member
 		}
 		else if (rStep == SQLITE_ROW)
 		{
-			const unsigned char* dbName = sqlite3_column_text(pstmt, 0);
+			dto.id = sqlite3_column_int(pstmt, 0);
+			const unsigned char* dbName = sqlite3_column_text(pstmt, 1);
 			dto.name = std::string((char*)dbName);
-			dto.age = sqlite3_column_int(pstmt, 1);
+			dto.age = sqlite3_column_int(pstmt, 2);
 		}
 
 		sqlite3_reset(pstmt);
@@ -114,6 +115,37 @@ namespace Member
 		else if (rStep == SQLITE_ROW)
 		{
 			count = sqlite3_column_int(pstmt, 0);
+		}
+
+		sqlite3_reset(pstmt);
+		sqlite3_finalize(pstmt);
+
+		return true;
+	}
+
+	bool DAO::deleteBy(int id) {
+		sqlite3_stmt* pstmt = nullptr;
+		const char* tail = nullptr;
+		const char* sql = "delete from Member where rowid = ?1 ";
+		int rt2 = sqlite3_prepare(conn, sql, (int)strlen(sql), &pstmt, &tail);
+		if (rt2 != SQLITE_OK)
+		{
+			fprintf(stderr, "failed prepare stmt %s", tail);
+			return false;
+		}
+
+		int rtBindInt = sqlite3_bind_int(pstmt, 1, id);
+		if (rtBindInt != SQLITE_OK)
+		{
+			fprintf(stderr, "bind int failed");
+			return false;
+		}
+
+		int rStep = sqlite3_step(pstmt);
+		if (rStep != SQLITE_DONE)
+		{
+			fprintf(stderr, "failed delete stmt %s", sqlite3_errmsg(sqlite3_db_handle(pstmt)));
+			return false;
 		}
 
 		sqlite3_reset(pstmt);

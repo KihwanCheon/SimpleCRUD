@@ -87,6 +87,7 @@ namespace Member
             bool success = dao.select("gujjy", rtDB);
 
             if (success) {
+                EXPECT_EQ(rtDB.id, 1);
                 EXPECT_EQ(rtDB.age, 30);
                 EXPECT_STREQ(rtDB.name.c_str(), "gujjy");
             }
@@ -100,6 +101,20 @@ namespace Member
             if (success) {
                 EXPECT_EQ(count, 1);
             }
+        }
+
+        // lbl_delete:
+        {
+            bool success = dao.deleteBy(1);
+            if (success) {
+                int count;
+                success = dao.count(count);
+
+                if (success) {
+                    EXPECT_EQ(count, 0);
+                }
+            } else
+                EXPECT_TRUE(false);
         }
     }
 }
