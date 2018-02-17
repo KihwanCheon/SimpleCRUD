@@ -19,7 +19,6 @@ DAO::~DAO()
 
 }
 
-
 bool DAO::insert(DTO &dto) {
 
     sqlite3_stmt* pstmt = nullptr;
@@ -88,6 +87,34 @@ bool DAO::select(const char *name, DTO &dto) {
         const unsigned char* dbName = sqlite3_column_text(pstmt, 0);
         dto.name = std::string((char*)dbName);
         dto.age = sqlite3_column_int(pstmt, 1);
+    }
+
+    sqlite3_reset(pstmt);
+    sqlite3_finalize(pstmt);
+
+    return true;
+}
+
+bool DAO::count(int &count) {
+    sqlite3_stmt* pstmt = nullptr;
+    const char* tail = nullptr;
+    const char* sql = "select count(*) from Member";
+    int rt2 = sqlite3_prepare(conn, sql, (int)strlen(sql), &pstmt, &tail);
+    if (rt2 != SQLITE_OK)
+    {
+        fprintf(stderr, "failed prepare stmt");
+        return false;
+    }
+
+    int rStep = sqlite3_step(pstmt);
+    if (rStep == SQLITE_ERROR)
+    {
+        fprintf(stderr, "failed insert stmt %s", sqlite3_errmsg(sqlite3_db_handle(pstmt)));
+        return false;
+    }
+    else if (rStep == SQLITE_ROW)
+    {
+        count = sqlite3_column_int(pstmt, 0);
     }
 
     sqlite3_reset(pstmt);

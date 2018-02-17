@@ -23,5 +23,7 @@ namespace Member {
         bool insert(DTO& dto);
 
         bool select(const char *name, DTO &dto);
+
+        bool count(int &count);
     };
 }

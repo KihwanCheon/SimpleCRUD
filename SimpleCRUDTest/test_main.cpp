@@ -31,7 +31,7 @@ class MinimalistPrinter : public ::testing::EmptyTestEventListener {
 
 
 int main(int argc, char **argv) {
-    std::cout << "hihi" << std::endl;
+    //std::cout << "hihi" << std::endl;
 
     ::testing::InitGoogleTest(&argc, argv);
     // Gets hold of the event listener list.
