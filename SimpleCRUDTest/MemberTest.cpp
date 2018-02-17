@@ -73,7 +73,7 @@ namespace Member
 
         //lbl_insert:
         {
-            DTO dto;
+            Member dto;
             dto.name = "gujjy";
             dto.age = 30;
             bool success = dao.insert(dto);
@@ -83,7 +83,7 @@ namespace Member
 
         // lbl_update:
         {
-            DTO rtDB;
+            Member rtDB;
             bool success = dao.select("gujjy", rtDB);
 
             if (success) {

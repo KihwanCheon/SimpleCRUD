@@ -19,7 +19,7 @@ DAO::~DAO()
 
 }
 
-bool DAO::insert(DTO &dto) {
+bool DAO::insert(Member &dto) {
 
     sqlite3_stmt* pstmt = nullptr;
     const char* tail = nullptr;
@@ -58,7 +58,7 @@ bool DAO::insert(DTO &dto) {
     return true;
 }
 
-bool DAO::select(const char *name, DTO &dto) {
+bool DAO::select(const char *name, Member &dto) {
     sqlite3_stmt* pstmt = nullptr;
     const char* tail = nullptr;
     const char* sql = "select * from Member where name = ?1 ";

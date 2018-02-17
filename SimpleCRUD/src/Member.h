@@ -8,7 +8,7 @@
 
 namespace Member {
 
-    struct DTO {
+    struct Member {
         std::string name;
         int age;
     };
@@ -20,9 +20,9 @@ namespace Member {
     private:
         sqlite3* conn;
     public:
-        bool insert(DTO& dto);
+        bool insert(Member& dto);
 
-        bool select(const char *name, DTO &dto);
+        bool select(const char *name, Member &dto);
 
         bool count(int &count);
     };
