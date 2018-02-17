@@ -4,13 +4,15 @@ project(SimpleCRUD)
 
 set(CMAKE_CXX_STANDARD 98)
 
-include_directories(../sqlite/.libs)
 include_directories(../sqlite)
 
 file(GLOB src_files src/*.cpp)
+file(GLOB sqlite_src_files ../sqlite/*.c)
+
+add_library(libsqlite3 STATIC ${sqlite_src_files})
 
 add_library(lib${PROJECT_NAME} STATIC ${src_files} )
-target_link_libraries(lib${PROJECT_NAME} libsqlite3.a)
+target_link_libraries(lib${PROJECT_NAME} libsqlite3)
 target_include_directories(lib${PROJECT_NAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         )
