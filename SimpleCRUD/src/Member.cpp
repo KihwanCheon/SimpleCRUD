@@ -9,7 +9,8 @@
 
 namespace Member
 {
-	DAO::DAO(sqlite3 *&conn) :conn(conn) {
+	DAO::DAO(sqlite3 *&conn) :conn(conn) 
+	{
 
 	}
 
@@ -60,7 +61,7 @@ namespace Member
 	bool DAO::select(const char *name, Member &dto) {
 		sqlite3_stmt* pstmt = nullptr;
 		const char* tail = nullptr;
-		const char* sql = "select * from Member where name = ?1 ";
+		const char* sql = "select rowid, name, age from Member where name = ?1 ";
 		int rt2 = sqlite3_prepare(conn, sql, (int)strlen(sql), &pstmt, &tail);
 		if (rt2 != SQLITE_OK)
 		{
@@ -83,9 +84,10 @@ namespace Member
 		}
 		else if (rStep == SQLITE_ROW)
 		{
-			const unsigned char* dbName = sqlite3_column_text(pstmt, 0);
+			dto.id = sqlite3_column_int(pstmt, 0);
+			const unsigned char* dbName = sqlite3_column_text(pstmt, 1);
 			dto.name = std::string((char*)dbName);
-			dto.age = sqlite3_column_int(pstmt, 1);
+			dto.age = sqlite3_column_int(pstmt, 2);
 		}
 
 		sqlite3_reset(pstmt);

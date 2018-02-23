@@ -8,7 +8,9 @@
 
 namespace Member {
 
-    struct Member {
+    struct Member 
+	{
+		int id;
         std::string name;
         int age;
     };
