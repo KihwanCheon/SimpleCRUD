@@ -10,19 +10,23 @@
 
 namespace Member
 {
-	DAO::DAO(sqlite3 *&conn) :conn(conn) 
+	DAO::DAO(sqlite3 *&conn) :conn(conn)
 	{
-
+		sqlTemplate = new SqlTemplate(*conn);
 	}
 
 	DAO::~DAO()
 	{
-
+		if (sqlTemplate)
+		{
+			delete sqlTemplate;
+			sqlTemplate = nullptr;
+		}
 	}
 
 	bool DAO::insert(Member &dto) 
 	{
-		return SqlTemplate::Query(conn,
+		return sqlTemplate->Query(
 			"insert into Member(name, age) values(?1, ?2)"
 			, [&](sqlite3_stmt& pstmt)->int
 			{
@@ -53,7 +57,7 @@ namespace Member
 	}
 
 	bool DAO::select(const char *name, Member &dto) {
-		return SqlTemplate::Query(conn,
+		return sqlTemplate->Query(
 			"select rowid, name, age from Member where name = ?1 "
 			, [&](sqlite3_stmt& pstmt)->int
 			{

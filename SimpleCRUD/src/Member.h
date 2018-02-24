@@ -5,6 +5,7 @@
 
 #include <string>
 #include <sqlite3.h>
+#include "SqlTemplate.h"
 
 namespace Member {
 
@@ -22,7 +23,8 @@ namespace Member {
         ~DAO();
 
     private:
-        sqlite3 *conn;
+	    sqlite3* conn;
+	    SqlTemplate* sqlTemplate;
     public:
         bool insert(Member &dto);
 

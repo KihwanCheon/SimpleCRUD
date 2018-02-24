@@ -5,13 +5,16 @@
 
 class SqlTemplate
 {
-private:
-	SqlTemplate();
+public:
+	explicit SqlTemplate(sqlite3& conn);
 	~SqlTemplate();
+
+private:
+	sqlite3& conn;
 
 public:
 
-	static bool Query(sqlite3* conn, const std::string& query
+	bool Query(const std::string& query
 		, std::function<int(sqlite3_stmt&)> parmalMapper
-		, std::function<void(sqlite3_stmt&)> executor);
+		, std::function<void(sqlite3_stmt&)> executor) const;
 };

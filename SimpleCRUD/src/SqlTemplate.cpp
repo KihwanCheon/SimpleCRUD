@@ -2,18 +2,18 @@
 
 using namespace std;
 
-SqlTemplate::SqlTemplate() {};
+SqlTemplate::SqlTemplate(sqlite3& conn) :conn(conn){};
 
 SqlTemplate::~SqlTemplate() {};
 
-bool SqlTemplate::Query(sqlite3* conn, const std::string& query, 
+bool SqlTemplate::Query(const std::string& query, 
 	function<int(sqlite3_stmt&)> parmalMapper
-	, function<void(sqlite3_stmt&)> executor)
+	, function<void(sqlite3_stmt&)> executor) const
 {
 	sqlite3_stmt* pstmt = nullptr;
 	const char* tail = nullptr;
 	const char* sql = query.c_str();
-	const int prepareResult = sqlite3_prepare(conn, sql, static_cast<int>(strlen(sql)), &pstmt, &tail);
+	const int prepareResult = sqlite3_prepare(&conn, sql, static_cast<int>(strlen(sql)), &pstmt, &tail);
 	if (prepareResult != SQLITE_OK)
 	{
 		fprintf(stderr, "failed prepare stmt");
