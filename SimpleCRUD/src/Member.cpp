@@ -10,27 +10,23 @@
 
 namespace Member
 {
-	DAO::DAO(sqlite3 *&conn) :conn(conn)
+	DAO::DAO(sqlite3* &conn) : SqlTemplate(*conn)
 	{
-		sqlTemplate = new SqlTemplate(*conn);
+		
 	}
 
 	DAO::~DAO()
 	{
-		if (sqlTemplate)
-		{
-			delete sqlTemplate;
-			sqlTemplate = nullptr;
-		}
+		
 	}
 
 	bool DAO::insert(Member &dto) 
 	{
-		return sqlTemplate->Query(
+		return Execute(
 			"insert into Member(name, age) values(?1, ?2)"
 			, [&](sqlite3_stmt& pstmt)->int
 			{
-				int rtBindText = sqlite3_bind_text(&pstmt, 1, dto.name.c_str(), (int)strlen(dto.name.c_str()), SQLITE_STATIC);
+				int rtBindText = sqlite3_bind_text(&pstmt, 1, dto.name.c_str(), strlen(dto.name.c_str()), SQLITE_STATIC);
 				if (rtBindText != SQLITE_OK)
 				{
 					fprintf(stderr, "bind text failed");
@@ -44,24 +40,16 @@ namespace Member
 					return rtBindText;
 				}
 				return rtBindInt;
-			},
-			[&](sqlite3_stmt& pstmt)->void
-			{
-				const int stepResult = sqlite3_step(&pstmt);
-				if (stepResult != SQLITE_DONE)
-				{
-					fprintf(stderr, "failed insert stmt %s", sqlite3_errmsg(sqlite3_db_handle(&pstmt)));
-				}
 			}
 		);
 	}
 
 	bool DAO::select(const char *name, Member &dto) {
-		return sqlTemplate->Query(
+		return Query(
 			"select rowid, name, age from Member where name = ?1 "
 			, [&](sqlite3_stmt& pstmt)->int
 			{
-				return sqlite3_bind_text(&pstmt, 1, name, (int)strlen(name), SQLITE_STATIC);
+				return sqlite3_bind_text(&pstmt, 1, name, strlen(name), SQLITE_STATIC);
 			},
 			[&](sqlite3_stmt& pstmt)->void
 			{
@@ -76,32 +64,26 @@ namespace Member
 		);
 	}
 
-	bool DAO::count(int &count) {
-		sqlite3_stmt* pstmt = nullptr;
-		const char* tail = nullptr;
-		const char* sql = "select count(*) from Member";
-		int rt2 = sqlite3_prepare(conn, sql, (int)strlen(sql), &pstmt, &tail);
-		if (rt2 != SQLITE_OK)
-		{
-			fprintf(stderr, "failed prepare stmt");
-			return false;
-		}
-
-		int rStep = sqlite3_step(pstmt);
-		if (rStep == SQLITE_ERROR)
-		{
-			fprintf(stderr, "failed insert stmt %s", sqlite3_errmsg(sqlite3_db_handle(pstmt)));
-			return false;
-		}
-		else if (rStep == SQLITE_ROW)
-		{
-			count = sqlite3_column_int(pstmt, 0);
-		}
-
-		sqlite3_reset(pstmt);
-		sqlite3_finalize(pstmt);
-
-		return true;
+	bool DAO::count(int &count) 
+	{
+		return Query(
+			"select count(*) from Member"
+			, [&](sqlite3_stmt& pstmt)->int
+			{
+				return SQLITE_OK;
+			},
+			[&](sqlite3_stmt& pstmt)->void
+			{
+				const int rStep = sqlite3_step(&pstmt);
+				if (rStep == SQLITE_ERROR)
+				{
+					fprintf(stderr, "failed insert stmt %s", sqlite3_errmsg(sqlite3_db_handle(&pstmt)));
+				}
+				else if (rStep == SQLITE_ROW)
+				{
+					count = sqlite3_column_int(&pstmt, 0);
+				}
+			}
+		);
 	}
-
 }

@@ -9,27 +9,25 @@
 
 namespace Member {
 
-    struct Member 
+	struct Member
 	{
 		int id;
-        std::string name;
-        int age;
-    };
+		std::string name;
+		int age;
+	};
 
-    class DAO {
-    public:
-        explicit DAO(sqlite3 *&conn);
+	class DAO :private SqlTemplate {
+	public:
+		explicit DAO(sqlite3* &conn);
 
-        ~DAO();
+		~DAO();
 
-    private:
-	    sqlite3* conn;
-	    SqlTemplate* sqlTemplate;
-    public:
-        bool insert(Member &dto);
+	private:
+	public:
+		bool insert(Member &dto);
 
-        bool select(const char *name, Member &dto);
+		bool select(const char* name, Member &dto);
 
-        bool count(int &count);
-    };
+		bool count(int &count);
+	};
 }

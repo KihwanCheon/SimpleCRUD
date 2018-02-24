@@ -17,4 +17,7 @@ public:
 	bool Query(const std::string& query
 		, std::function<int(sqlite3_stmt&)> parmalMapper
 		, std::function<void(sqlite3_stmt&)> executor) const;
+
+	bool Execute(const std::string& query
+		, std::function<int(sqlite3_stmt&)> parmalMapper) const;
 };
