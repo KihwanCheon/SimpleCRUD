@@ -2,9 +2,9 @@
 
 using namespace std;
 
-SqlTemplate::SqlTemplate() = default;
+SqlTemplate::SqlTemplate() {};
 
-SqlTemplate::~SqlTemplate() = default;
+SqlTemplate::~SqlTemplate() {};
 
 bool SqlTemplate::Query(sqlite3* conn, const std::string& query, 
 	function<int(sqlite3_stmt&)> parmalMapper
@@ -27,11 +27,8 @@ bool SqlTemplate::Query(sqlite3* conn, const std::string& query,
 		return false;
 	}
 
-	while (sqlite3_step(pstmt) == SQLITE_ROW)
-	{
-		resutlMapper(*pstmt);
-	}
-
+	resutlMapper(*pstmt);
+	
 	sqlite3_reset(pstmt);
 	sqlite3_finalize(pstmt);
 
