@@ -20,43 +20,36 @@ namespace Member
 
 	}
 
-	bool DAO::insert(Member &dto) {
+	bool DAO::insert(Member &dto) 
+	{
+		return SqlTemplate::Query(conn,
+			"insert into Member(name, age) values(?1, ?2)"
+			, [&](sqlite3_stmt& pstmt)->int
+			{
+				int rtBindText = sqlite3_bind_text(&pstmt, 1, dto.name.c_str(), (int)strlen(dto.name.c_str()), SQLITE_STATIC);
+				if (rtBindText != SQLITE_OK)
+				{
+					fprintf(stderr, "bind text failed");
+					return rtBindText;
+				}
 
-		sqlite3_stmt* pstmt = nullptr;
-		const char* tail = nullptr;
-		const char* sql = "insert into Member(name, age) values(?1, ?2)";
-		int rt2 = sqlite3_prepare(conn, sql, (int)strlen(sql), &pstmt, &tail);
-		if (rt2 != SQLITE_OK)
-		{
-			fprintf(stderr, "failed prepare stmt");
-			return false;
-		}
-
-		int rtBindText = sqlite3_bind_text(pstmt, 1, dto.name.c_str(), (int)strlen(dto.name.c_str()), SQLITE_STATIC);
-		if (rtBindText != SQLITE_OK)
-		{
-			fprintf(stderr, "bind text failed");
-			return false;
-		}
-
-		int rtBindInt = sqlite3_bind_int(pstmt, 2, dto.age);
-		if (rtBindInt != SQLITE_OK)
-		{
-			fprintf(stderr, "bind int failed");
-			return false;
-		}
-
-		int rStep = sqlite3_step(pstmt);
-		if (rStep != SQLITE_DONE)
-		{
-			fprintf(stderr, "failed insert stmt %s", sqlite3_errmsg(sqlite3_db_handle(pstmt)));
-			return false;
-		}
-
-		sqlite3_reset(pstmt);
-		sqlite3_finalize(pstmt);
-
-		return true;
+				int rtBindInt = sqlite3_bind_int(&pstmt, 2, dto.age);
+				if (rtBindInt != SQLITE_OK)
+				{
+					fprintf(stderr, "bind int failed");
+					return rtBindText;
+				}
+				return rtBindInt;
+			},
+			[&](sqlite3_stmt& pstmt)->void
+			{
+				const int stepResult = sqlite3_step(&pstmt);
+				if (stepResult != SQLITE_DONE)
+				{
+					fprintf(stderr, "failed insert stmt %s", sqlite3_errmsg(sqlite3_db_handle(&pstmt)));
+				}
+			}
+		);
 	}
 
 	bool DAO::select(const char *name, Member &dto) {

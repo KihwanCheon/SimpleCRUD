@@ -8,7 +8,7 @@ SqlTemplate::~SqlTemplate() {};
 
 bool SqlTemplate::Query(sqlite3* conn, const std::string& query, 
 	function<int(sqlite3_stmt&)> parmalMapper
-	, function<void(sqlite3_stmt&)> resutlMapper)
+	, function<void(sqlite3_stmt&)> executor)
 {
 	sqlite3_stmt* pstmt = nullptr;
 	const char* tail = nullptr;
@@ -26,8 +26,8 @@ bool SqlTemplate::Query(sqlite3* conn, const std::string& query,
 		fprintf(stderr, "bind text failed");
 		return false;
 	}
-
-	resutlMapper(*pstmt);
+	
+	executor(*pstmt);
 	
 	sqlite3_reset(pstmt);
 	sqlite3_finalize(pstmt);
