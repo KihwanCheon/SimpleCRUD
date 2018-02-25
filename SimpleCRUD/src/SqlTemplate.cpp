@@ -17,7 +17,7 @@ bool SqlTemplate::Query(const std::string &query,
 	sqlite3_stmt* pstmt = nullptr;
 	const char* tail = nullptr;
 	const char* sql = query.c_str();
-	const int prepareResult = sqlite3_prepare(&conn, sql, strlen(sql), &pstmt, &tail);
+	const int prepareResult = sqlite3_prepare(&conn, sql, static_cast<int>(strlen(sql)), &pstmt, &tail);
 	if (prepareResult != SQLITE_OK)
 	{
 		fprintf(stderr, "failed prepare stmt");
@@ -69,4 +69,17 @@ bool SqlTemplate::Execute(const std::string& query
 	sqlite3_finalize(pstmt);
 
 	return true;
+}
+
+SqlTemplate::ScopedTran::ScopedTran(SqlTemplate& t):t(t), hasError(false)
+{
+	t.Execute("BEGIN TRANSACTION", [&](sqlite3_stmt&)->int {return SQLITE_OK; });
+}
+
+SqlTemplate::ScopedTran::~ScopedTran()
+{
+	if (hasError)
+		t.Execute("ROLLBACK", [&](sqlite3_stmt&)->int {return SQLITE_OK; });
+	else
+		t.Execute("COMMIT", [&](sqlite3_stmt&)->int {return SQLITE_OK; });
 }

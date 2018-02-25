@@ -10,23 +10,50 @@
 
 namespace Member
 {
+	void Member::save()
+	{
+		SqlTemplate::ScopedTran st(dao);
+
+		if (id > 0)
+			dao.update(*this);
+		else
+			dao.insert(*this);
+	}
+
+	void Member::refresh()
+	{
+		Member m(dao);
+		m.id = id;
+		if (dao.selectById(m))
+		{
+			age = m.age;
+			name = m.name;
+		}
+	}
+
+	Member::Member(DAO& dao): dao(dao), id(0), age(0)
+	{
+	}
+
+	Member::~Member()
+	{
+	}
+
 	DAO::DAO(sqlite3* &conn) : SqlTemplate(*conn)
 	{
-		
 	}
 
 	DAO::~DAO()
 	{
-		
 	}
 
 	bool DAO::insert(Member &dto) 
 	{
-		return Execute(
+		const bool rt = Execute(
 			"insert into Member(name, age) values(?1, ?2)"
 			, [&](sqlite3_stmt& pstmt)->int
 			{
-				int rtBindText = sqlite3_bind_text(&pstmt, 1, dto.name.c_str(), strlen(dto.name.c_str()), SQLITE_STATIC);
+				int rtBindText = sqlite3_bind_text(&pstmt, 1, dto.name.c_str(), static_cast<int>(strlen(dto.name.c_str())), SQLITE_STATIC);
 				if (rtBindText != SQLITE_OK)
 				{
 					fprintf(stderr, "bind text failed");
@@ -42,6 +69,45 @@ namespace Member
 				return rtBindInt;
 			}
 		);
+
+		if (rt)
+		{
+			dto.id = static_cast<int>(sqlite3_last_insert_rowid(&conn));
+		}
+		
+		return rt;
+	}
+
+	bool DAO::update(Member& dto)
+	{
+		return Execute(
+			"update Member set name = ?1, age = ?2 where rowid = ?3"
+			, [&](sqlite3_stmt& pstmt)->int
+			{
+				int bindNameResult = sqlite3_bind_text(&pstmt, 1, dto.name.c_str(), static_cast<int>(strlen(dto.name.c_str())), SQLITE_STATIC);
+				if (bindNameResult != SQLITE_OK)
+				{
+					fprintf(stderr, "bind name failed");
+					return bindNameResult;
+				}
+
+				int bindAgeResult = sqlite3_bind_int(&pstmt, 2, dto.age);
+				if (bindAgeResult != SQLITE_OK)
+				{
+					fprintf(stderr, "bind age failed");
+					return bindAgeResult;
+				}
+
+				int bindIdResult = sqlite3_bind_int(&pstmt, 3, dto.id);
+				if (bindIdResult != SQLITE_OK)
+				{
+					fprintf(stderr, "bind id failed");
+					return bindIdResult;
+				}
+
+				return bindIdResult;
+			}
+		);
 	}
 
 	bool DAO::select(const char *name, Member &dto) {
@@ -49,7 +115,7 @@ namespace Member
 			"select rowid, name, age from Member where name = ?1 "
 			, [&](sqlite3_stmt& pstmt)->int
 			{
-				return sqlite3_bind_text(&pstmt, 1, name, strlen(name), SQLITE_STATIC);
+				return sqlite3_bind_text(&pstmt, 1, name, static_cast<int>(strlen(name)), SQLITE_STATIC);
 			},
 			[&](sqlite3_stmt& pstmt)->void
 			{
@@ -82,6 +148,26 @@ namespace Member
 				else if (rStep == SQLITE_ROW)
 				{
 					count = sqlite3_column_int(&pstmt, 0);
+				}
+			}
+		);
+	}
+
+	int DAO::selectById(Member& dto)
+	{
+		return Query(
+			"select name, age from Member where rowid = ?1 "
+			, [&](sqlite3_stmt& pstmt)->int
+			{
+				return sqlite3_bind_int(&pstmt, 1, dto.id);
+			},
+			[&](sqlite3_stmt& pstmt)->void
+			{
+				if (sqlite3_step(&pstmt) == SQLITE_ROW)
+				{
+					const unsigned char* dbName = sqlite3_column_text(&pstmt, 0);
+					dto.name = std::string((char*)dbName);
+					dto.age = sqlite3_column_int(&pstmt, 1);
 				}
 			}
 		);

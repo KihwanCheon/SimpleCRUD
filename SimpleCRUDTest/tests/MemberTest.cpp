@@ -16,7 +16,7 @@ namespace Member
         sqlite3 *conn;
 
     public:
-        virtual void SetUp()
+        virtual void SetUp() override
         {
             sqlite3_open("local_sqlite.db", &conn);
 
@@ -36,7 +36,7 @@ namespace Member
             }
         }
 
-        virtual void TearDown()
+        virtual void TearDown() override
         {
             char *errDropMsg = nullptr;
             int rt = sqlite3_exec(conn, "DROP TABLE Member", callback_insert, nullptr, &errDropMsg);
@@ -73,29 +73,42 @@ namespace Member
 
         //lbl_insert:
         {
-            Member dto;
+            Member dto(dao);
             dto.name = "gujjy";
             dto.age = 30;
-            bool success = dao.insert(dto);
 
-            EXPECT_EQ(success, true);
+			EXPECT_EQ(dto.id, 0);
+			
+        	dto.save();
+			EXPECT_EQ(dto.id, 1);
         }
 
-        // lbl_update:
+        // lbl_select:
         {
-            Member rtDB;
-            bool success = dao.select("gujjy", rtDB);
+            Member rtDB(dao);
+            const bool success = dao.select("gujjy", rtDB);
 
             if (success) {
-                EXPECT_EQ(rtDB.age, 30);
+				EXPECT_EQ(rtDB.id, 1);
+            	EXPECT_EQ(rtDB.age, 30);
                 EXPECT_STREQ(rtDB.name.c_str(), "gujjy");
             }
         }
 
+		// lbl_select by id:
+		{
+			Member rtDB(dao);
+			rtDB.id = 1;
+			rtDB.refresh();
+
+			EXPECT_EQ(rtDB.age, 30);
+			EXPECT_STREQ(rtDB.name.c_str(), "gujjy");
+		}
+
         // lbl_count:
         {
             int count;
-            bool success = dao.count(count);
+            const bool success = dao.count(count);
 
             if (success) {
                 EXPECT_EQ(count, 1);
