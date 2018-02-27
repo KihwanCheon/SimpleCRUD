@@ -173,35 +173,13 @@ namespace Member
         );
     }
 
-	bool DAO::deleteBy(int id) {
-		sqlite3_stmt* pstmt = nullptr;
-		const char* tail = nullptr;
-		const char* sql = "delete from Member where rowid = ?1 ";
-		int rt2 = sqlite3_prepare(&conn, sql, (int)strlen(sql), &pstmt, &tail);
-		if (rt2 != SQLITE_OK)
-		{
-			fprintf(stderr, "failed prepare stmt %s", tail);
-			return false;
-		}
-
-		int rtBindInt = sqlite3_bind_int(pstmt, 1, id);
-		if (rtBindInt != SQLITE_OK)
-		{
-			fprintf(stderr, "bind int failed");
-			return false;
-		}
-
-		int rStep = sqlite3_step(pstmt);
-		if (rStep != SQLITE_DONE)
-		{
-			fprintf(stderr, "failed delete stmt %s", sqlite3_errmsg(sqlite3_db_handle(pstmt)));
-			return false;
-		}
-
-		sqlite3_reset(pstmt);
-		sqlite3_finalize(pstmt);
-
-		return true;
+	bool DAO::deleteBy(int id)
+	{
+		return Execute("delete from Member where rowid = ?1 "
+			, [&](sqlite3_stmt& pstmt)->int
+			{
+				return sqlite3_bind_int(&pstmt, 1, id);
+			}
+		);
 	}
-
 }
