@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.9)
 
 project(SimpleCRUD)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 
 include_directories(../sqlite)
+include_directories(./src)
 
-file(GLOB src_files src/*.cpp)
+
+file(GLOB src_files ./src/*.cpp)
 file(GLOB sqlite_src_files ../sqlite/*.c)
 
 add_library(libsqlite3 STATIC ${sqlite_src_files})
