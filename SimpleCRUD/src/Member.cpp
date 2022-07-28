@@ -1,5 +1,4 @@
 //
-// Created by NHNEnt on 2018. 2. 17..
 //
 
 #include <iostream>

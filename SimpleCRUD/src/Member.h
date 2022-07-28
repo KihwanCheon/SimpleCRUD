@@ -1,5 +1,4 @@
 //
-// Created by NHNEnt on 2018. 2. 17..
 //
 #pragma once
 
@@ -7,55 +6,59 @@
 #include <sqlite3.h>
 #include "SqlTemplate.h"
 
-namespace Member {
-
+namespace Member
+{
     class Member;
 
-	class DAO :public SqlTemplate
+    class DAO : public SqlTemplate
     {
     public:
-        explicit DAO(sqlite3* &conn);
+        explicit DAO(sqlite3*& conn);
+
         virtual ~DAO();
 
     private:
         DAO(const DAO&);
+
         DAO& operator=(const DAO&);
 
     public:
-        bool insert(Member &dto);
+        bool insert(Member& dto);
 
-        bool update(Member &dto);
+        bool update(Member& dto);
 
-        bool select(const char* name, Member &dto);
+        bool select(const char* name, Member& dto);
 
-        bool count(int &count);
+        bool count(int& count);
 
-        int selectById(Member &dto);
+        int selectById(Member& dto);
 
         bool deleteBy(int id);
-
-    };
-	class Member
-	{
-	public:
-		explicit Member(DAO& dao);;
-		~Member();
-
-	private:
-		Member(const Member&);
-		Member& operator=(const Member&);
-
-	private:
-		DAO &dao;
-
-	public:
-		int id;
-		std::string name;
-		int age;
-	public:
-		void save();
-		void refresh();
     };
 
+    class Member
+    {
+    public:
+        explicit Member(DAO& dao);;
 
+        ~Member();
+
+    private:
+        Member(const Member&);
+
+        Member& operator=(const Member&);
+
+    private:
+        DAO& dao;
+
+    public:
+        int id;
+        std::string name;
+        int age;
+
+    public:
+        void save();
+
+        void refresh();
+    };
 }
