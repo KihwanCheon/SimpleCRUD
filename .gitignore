@@ -39,3 +39,6 @@ SimpleCRUDTest/SimpleCRUDTest.vcxproj
 SimpleCRUDTest/SimpleCRUDTest.vcxproj.filters
 SimpleCRUDTest/cmake_install.cmake
 build/
+out/
+build*/
+.vs/
